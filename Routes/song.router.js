@@ -1,19 +1,10 @@
 import express from 'express';
-import db from '../Config/db.config.js';
+import SongController from '../Controllers/song.controller.js';
 
+const controller = new SongController();
 const router = express.Router();
 
-router.get('/', (req, res) => {
-	const sql = `SELECT id, title	 
-					FROM song ORDER BY title`;
-	db.query(sql, (error, result) => {
-		if(error) {
-			console.error(error);
-		} else {
-			console.log(result);
-		}
-	})
-	res.status(200).send('Velkommen til sangbogen');
-})
+router.get('/', (req, res) => { controller.list(req, res) })
+router.get('/:id([0-9]*)', (req, res) => { controller.get(req, res) })
 
 export { router }
