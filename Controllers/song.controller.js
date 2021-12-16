@@ -1,18 +1,40 @@
-import { response } from "express";
+import SongModel from '../Models/song.model.js';
+
+// Instans (forekomst) af class SongController
+const model = new SongModel();
 
 class SongController {
-	constructor() {
-		console.log('Der er blevet kaldt en instans af klassen SongController');
+	// Class constructor
+	constructor() {}
+
+	/* Song Controller Methods Begin */
+
+	list = async (req, res) => {
+		const result = await model.list(req, res)
+		res.json(result)
 	}
 
-	list = (req, res) => {
-		res.send('Metoden list er blevet kaldt på klassen SongController');
-	}
+	get = async (req, res) => {
+		const result = await model.get(req, res)
+		res.json(result)
+	}	
 
-	get = (req, res) => {
-		console.log(req.params.id);
-		res.send('Metoden get er blevet kaldt på klassen SongController');
+	create = async (req, res) => {
+		const result = await model.create(req, res)
+		res.json(result)
+	}	
+
+	update = async (req, res) => {
+		const result = await model.update(req, res)
+		res.json(result)
 	}
+	
+	delete = async (req, res) => {
+		const result = await model.delete(req, res)
+		res.json(result)
+	}		
+
+	/* Song Controller Methods End */
 }
 
 export default SongController;
