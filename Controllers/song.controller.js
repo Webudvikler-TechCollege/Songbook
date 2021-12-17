@@ -1,39 +1,65 @@
 import SongModel from '../Models/song.model.js';
+import ArtistModel from '../Models/artist.model.js';
 
-// Instans (forekomst) af class SongController
-const model = new SongModel();
-
+ArtistModel.hasMany(SongModel)
+SongModel.belongsTo(ArtistModel)
 class SongController {
 	// Class constructor
 	constructor() {}
 
 	/* Song Controller Methods Begin */
-
 	list = async (req, res) => {
-		const result = await model.list(req, res)
+		const result = await SongModel.findAll({
+			attributes: ['id', 'title'],
+			limit: 3,
+			order: ['title'],
+			include: { 
+				model: ArtistModel,
+				attributes: ['id', 'name']
+			}
+		})
 		res.json(result)
 	}
 
 	get = async (req, res) => {
-		const result = await model.get(req, res)
-		res.json(result)
-	}	
+		const result = await SongModel.findAll({
+			where: { id: req.params.id },
+			include: ArtistModel
+		})
+		res.json(...result)
+	}
 
 	create = async (req, res) => {
-		const result = await model.create(req, res)
-		res.json(result)
-	}	
+		const { title, content, artist_id } = req.body;
+
+		if(title && content && artist_id) {
+			const model = await SongModel.create(req.body)
+			return res.json({ newid: model.id})
+		} else {
+			res.send(418)
+		}
+	}
 
 	update = async (req, res) => {
-		const result = await model.update(req, res)
-		res.json(result)
-	}
-	
-	delete = async (req, res) => {
-		const result = await model.delete(req, res)
-		res.json(result)
-	}		
+		const { title, content, artist_id, id } = req.body;
 
+		if(title && content && artist_id && id) {
+			const model = await SongModel.update(req.body, { where: { id: id }})
+			return res.json({ status: true })
+		} else {
+			res.send(418)
+		}
+	}	
+
+	delete = async (req, res) => {
+		try {
+			await SongModel.destroy({ where: { id: req.params.id }})
+			res.sendStatus(200)
+		}
+		catch(err) {
+			res.send(err)
+		}
+	}	
 	/* Song Controller Methods End */
 }
 
